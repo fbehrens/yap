@@ -51,7 +51,12 @@ import Speech
             locale: locale,
             transcriptionOptions: censor ? [.etiquetteReplacements] : [],
             reportingOptions: [],
-            attributeOptions: outputFormat.needsAudioTimeRange ? [.audioTimeRange] : []
+            attributeOptions: Set(
+                [
+                    outputFormat.needsAudioTimeRange ? SpeechTranscriber.ResultAttributeOption.audioTimeRange : nil,
+                    outputFormat.needsTranscriptionConfidence ? SpeechTranscriber.ResultAttributeOption.transcriptionConfidence : nil
+                ].compactMap { $0 }
+            )
         )
         let modules: [any SpeechModule] = [transcriber]
         let installed = await Set(SpeechTranscriber.installedLocales)
@@ -85,9 +90,8 @@ import Speech
 
         var w = winsize()
         let terminalColumns = if ioctl(STDOUT_FILENO, UInt(TIOCGWINSZ), &w) == 0 {
-            max(Int(w.ws_col), 9)
+            max(Int(w.ws_col), 10)
         } else { 64 }
-
         try await noora.progressStep(
             message: "Transcribing audio using locale: \"\(locale.identifier)\"…",
             successMessage: "Audio transcribed using locale: \"\(locale.identifier)\"",

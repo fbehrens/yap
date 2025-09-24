@@ -16,6 +16,13 @@ enum OutputFormat: String, EnumerableFlag {
         }
     }
 
+    var needsTranscriptionConfidence: Bool {
+        switch self {
+        case .words: true
+        default: false
+        }
+    }
+
     func text(for transcript: AttributedString) -> String {
         switch self {
         case .txt:
@@ -23,8 +30,10 @@ enum OutputFormat: String, EnumerableFlag {
         case .words:
             var result = ""
             for run in transcript.runs {
-                if let timeRange = run.audioTimeRange {
-                    result += "\(format(timeRange.start.seconds)) --> \(format(timeRange.end.seconds))\(String(transcript[run.range].characters))\n"
+                if let timeRange = run.audioTimeRange,
+                   let confidence = run.transcriptionConfidence{
+                        let v = "\(timeRange.start.seconds)\t\(timeRange.end.seconds)\t\(confidence)\t\(String(transcript[run.range].characters))\n"
+                        result += v
                 }
             }
             return result
