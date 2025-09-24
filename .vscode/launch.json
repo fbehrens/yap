@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:yap}",
+            "name": "Debug yap",
+            "program": "${workspaceFolder:yap}/.build/debug/yap",
+            "preLaunchTask": "swift: Build Debug yap"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:yap}",
+            "name": "Release yap",
+            "program": "${workspaceFolder:yap}/.build/release/yap",
+            "preLaunchTask": "swift: Build Release yap"
+        }
+    ]
+}
