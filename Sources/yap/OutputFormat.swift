@@ -28,7 +28,7 @@ enum OutputFormat: String, EnumerableFlag {
         case .txt:
             return String(transcript.characters)
         case .words:
-            var result = ""
+            var result = "start\tend\tconfidence\tword\n"
             for run in transcript.runs {
                 if let timeRange = run.audioTimeRange,
                    let confidence = run.transcriptionConfidence{
