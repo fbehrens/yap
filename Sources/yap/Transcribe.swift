@@ -6,6 +6,7 @@ import Speech
 // MARK: - Transcribe
 
 @MainActor struct Transcribe: AsyncParsableCommand {
+
     @Option(
         name: .shortAndLong,
         help: "(default: current)",
@@ -45,11 +46,6 @@ import Speech
             noora.error(.alert("Locale \"\(locale.identifier)\" is not supported. Supported locales:\n\(supported.map(\.identifier))"))
             throw Error.unsupportedLocale
         }
-
-        for locale in await AssetInventory.allocatedLocales {
-            await AssetInventory.deallocate(locale: locale)
-        }
-        try await AssetInventory.allocate(locale: locale)
 
         let transcriber = SpeechTranscriber(
             locale: locale,
