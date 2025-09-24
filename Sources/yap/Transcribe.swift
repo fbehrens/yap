@@ -7,6 +7,11 @@ import Speech
 
 @MainActor struct Transcribe: AsyncParsableCommand {
 
+    @Flag(
+        name: .long,
+        help: "Output supported locales separated by ' '."
+    ) var supportedLocales: Bool = false
+
     @Option(
         name: .shortAndLong,
         help: "(default: current)",
@@ -20,7 +25,7 @@ import Speech
     @Argument(
         help: "Path to an audio or video file to transcribe.",
         transform: URL.init(fileURLWithPath:)
-    ) var inputFile: URL
+    ) var inputFile: URL?
 
     @Flag(
         help: "Output format for the transcription.",
@@ -33,6 +38,16 @@ import Speech
     ) var outputFile: URL?
 
     mutating func run() async throws {
+        if supportedLocales {
+            let supported = await SpeechTranscriber.supportedLocales
+            print(supported.map { $0.identifier }.joined(separator: "\n"))
+            return
+        }
+
+        guard let inputFile else {
+            throw ValidationError("Missing input file.")
+        }
+
         let piped = isatty(STDOUT_FILENO) == 0
         struct DevNull: StandardPipelining { func write(content _: String) {} }
         let noora = if piped {
